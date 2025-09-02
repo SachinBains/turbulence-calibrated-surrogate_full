@@ -1,0 +1,7 @@
+experiment,method,domain,test_rmse,test_mae,mc_test_rmse,mc_test_nll,mc_test_cov80,mc_test_cov90,ens_test_rmse,ens_conformal_coverage
+E1_hit_baseline,Baseline,ID (In-Domain),0.7199,0.6112,,,,,,
+E2_hit_bayes,MC Dropout,ID (In-Domain),,,0.7249,7.0299,0.1849,0.2478,,
+E3_hit_ab_baseline,Baseline,A->B (Domain Shift),0.7133,0.5666,,,,,,
+E4_hit_ab_dropout,MC Dropout,A->B (Domain Shift),,,0.6929,3.6731,0.4705,0.5681,,
+E5_hit_ens,Ensemble,ID (In-Domain),,,,,,,0.8106,0.0842
+E6_hit_ab_ens,Ensemble,A->B (Domain Shift),,,,,,,0.8106,

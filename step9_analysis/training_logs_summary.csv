@@ -1,0 +1,12 @@
+log_file,experiment,final_test_rmse,final_test_mae
+e1_train_eval-4842262.out,e1_train_eval,0.7199,0.6112
+e2_mc-4842312.out,e2_mc,,
+e2_mc_conf-4857919.out,e2_mc_conf,,
+e2_mc_conf-4858054.out,e2_mc_conf,,
+e2_mc_conf-4858175.out,e2_mc_conf,,
+e2_mc_conf-4858461.out,e2_mc_conf,,
+e3_train_eval-4842270.out,e3_train_eval,0.7133,0.5666
+e4_mc-4842321.out,e4_mc,,
+e5_ens-4846966.out,e5_ens,,
+e5_ens_conf-4859090.out,e5_ens_conf,,
+e6_ens-4853689.out,e6_ens,,

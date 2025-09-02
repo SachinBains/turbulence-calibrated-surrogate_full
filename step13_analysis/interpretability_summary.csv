@@ -1,0 +1,3 @@
+Method,Mean_Gradient,Spatial_Autocorr,Spectral_Peak_Freq,Energy_Ratio,High_Activity_Fraction,Activity_Clusters,Spatial_Spread,Prediction_Range,Prediction_Std
+E5_hit_ens,0.1161,1.000,1.0,0.934,0.050,3,266.82,1.9285,0.3092
+E6_hit_ab_ens,0.1161,1.000,1.0,0.934,0.050,3,266.82,1.9285,0.3092

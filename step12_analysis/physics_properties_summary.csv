@@ -1,0 +1,5 @@
+Method,divergence_rms,kinetic_energy,turbulent_ke,enstrophy,inertial_slope
+MC_Dropout_ID,0.0915,0.0678,0.0646,0.0079,-5.3941
+MC_Dropout_AB,0.1048,0.2833,0.1389,0.0104,-5.7774
+Ensemble_ID,0.1196,0.1169,0.0956,0.0157,-6.3703
+Ensemble_AB,0.1196,0.1169,0.0956,0.0157,-6.3703

@@ -1,0 +1,18 @@
+
+\begin{table}[h]
+\centering
+\caption{Quantitative Comparison of UQ Methods}
+\label{tab:uq_comparison}
+\begin{tabular}{llcccc}
+\toprule
+Method & Domain & RMSE & Coverage 80\% & Coverage 90\% & Conf. Coverage \\
+\midrule
+Baseline & ID (In-Domain) & 0.720 & -- & -- & -- \\
+MC Dropout & ID (In-Domain) & 0.725 & 0.185 & 0.248 & 0.111 \\
+Baseline & A->B (Domain Shift) & 0.713 & -- & -- & -- \\
+MC Dropout & A->B (Domain Shift) & 0.693 & 0.470 & 0.568 & -- \\
+Ensemble & ID (In-Domain) & 0.811 & -- & -- & 0.084 \\
+Ensemble & A->B (Domain Shift) & 0.811 & -- & -- & -- \\
+\bottomrule
+\end{tabular}
+\end{table}

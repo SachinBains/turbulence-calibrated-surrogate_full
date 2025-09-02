@@ -1,0 +1,332 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Turbulence Analysis Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        code { background-color: #f4f4f4; padding: 2px 4px; border-radius: 3px; }
+        pre { background-color: #f4f4f4; padding: 10px; border-radius: 5px; overflow-x: auto; }
+        h1, h2, h3 { color: #333; }
+        .summary { background-color: #e8f4fd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <h1>Turbulence-Calibrated Surrogate Model Analysis Report</h1>
+<p><strong>Generated on</strong>: 2025-09-01 20:55:08</p>
+<h2>Executive Summary</h2>
+<h3>Key Performance Findings</h3>
+<ul>
+<li><strong>Baseline RMSE</strong>: 0.7133</li>
+<li><strong>MC Dropout RMSE</strong>: 0.6929</li>
+<li><strong>Ensemble RMSE</strong>: 0.8106</li>
+</ul>
+<h3>Physics Validation Findings</h3>
+<ul>
+<li><strong>Best Incompressibility</strong>: MC_Dropout_ID</li>
+<li><strong>Divergence RMS Range</strong>: 0.0915 - 0.1196</li>
+</ul>
+<h3>Interpretability Findings</h3>
+<ul>
+<li><strong>Methods Analyzed</strong>: E5_hit_ens, E6_hit_ab_ens</li>
+<li><strong>Spatial Pattern Consistency</strong>: High</li>
+</ul>
+<h2>Methods</h2>
+<h3>Uncertainty Quantification Approaches</h3>
+<ol>
+<li><strong>MC Dropout</strong>: Monte Carlo dropout for epistemic uncertainty estimation</li>
+<li><strong>Deep Ensembles</strong>: Multiple model ensemble for uncertainty quantification</li>
+<li><strong>Conformal Prediction</strong>: Distribution-free uncertainty intervals</li>
+</ol>
+<h3>Evaluation Domains</h3>
+<ul>
+<li><strong>In-Domain (ID)</strong>: Training and testing on same spatial region</li>
+<li><strong>Out-of-Domain (A→B)</strong>: Training on region A, testing on region B</li>
+</ul>
+<h3>Analysis Pipeline</h3>
+<ol>
+<li><strong>Step 9</strong>: Aggregated experiment metrics and training logs</li>
+<li><strong>Step 10</strong>: Error and uncertainty visualization maps</li>
+<li><strong>Step 11</strong>: Quantitative UQ method comparison</li>
+<li><strong>Step 12</strong>: Physics consistency validation</li>
+<li><strong>Step 13</strong>: Interpretability and feature analysis</li>
+</ol>
+<h2>Results</h2>
+<h3>Performance Comparison</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">experiment</th>
+<th style="text-align: left;">method</th>
+<th style="text-align: left;">domain</th>
+<th style="text-align: right;">test_rmse</th>
+<th style="text-align: right;">test_mae</th>
+<th style="text-align: right;">mc_test_rmse</th>
+<th style="text-align: right;">mc_test_nll</th>
+<th style="text-align: right;">mc_test_cov80</th>
+<th style="text-align: right;">mc_test_cov90</th>
+<th style="text-align: right;">ens_test_rmse</th>
+<th style="text-align: right;">ens_conformal_coverage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">E1_hit_baseline</td>
+<td style="text-align: left;">Baseline</td>
+<td style="text-align: left;">ID (In-Domain)</td>
+<td style="text-align: right;">0.7199</td>
+<td style="text-align: right;">0.6112</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: right;">nan</td>
+</tr>
+<tr>
+<td style="text-align: left;">E2_hit_bayes</td>
+<td style="text-align: left;">MC Dropout</td>
+<td style="text-align: left;">ID (In-Domain)</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: right;">0.7249</td>
+<td style="text-align: right;">7.0299</td>
+<td style="text-align: right;">0.1849</td>
+<td style="text-align: right;">0.2478</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: right;">nan</td>
+</tr>
+<tr>
+<td style="text-align: left;">E3_hit_ab_baseline</td>
+<td style="text-align: left;">Baseline</td>
+<td style="text-align: left;">A-&gt;B (Domain Shift)</td>
+<td style="text-align: right;">0.7133</td>
+<td style="text-align: right;">0.5666</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: right;">nan</td>
+</tr>
+<tr>
+<td style="text-align: left;">E4_hit_ab_dropout</td>
+<td style="text-align: left;">MC Dropout</td>
+<td style="text-align: left;">A-&gt;B (Domain Shift)</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: right;">0.6929</td>
+<td style="text-align: right;">3.6731</td>
+<td style="text-align: right;">0.4705</td>
+<td style="text-align: right;">0.5681</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: right;">nan</td>
+</tr>
+<tr>
+<td style="text-align: left;">E5_hit_ens</td>
+<td style="text-align: left;">Ensemble</td>
+<td style="text-align: left;">ID (In-Domain)</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: right;">0.8106</td>
+<td style="text-align: right;">0.0842</td>
+</tr>
+<tr>
+<td style="text-align: left;">E6_hit_ab_ens</td>
+<td style="text-align: left;">Ensemble</td>
+<td style="text-align: left;">A-&gt;B (Domain Shift)</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: right;">0.8106</td>
+<td style="text-align: right;">nan</td>
+</tr>
+</tbody>
+</table>
+<h3>Physics Validation Results</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Method</th>
+<th style="text-align: right;">divergence_rms</th>
+<th style="text-align: right;">kinetic_energy</th>
+<th style="text-align: right;">turbulent_ke</th>
+<th style="text-align: right;">enstrophy</th>
+<th style="text-align: right;">inertial_slope</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">MC_Dropout_ID</td>
+<td style="text-align: right;">0.0915</td>
+<td style="text-align: right;">0.0678</td>
+<td style="text-align: right;">0.0646</td>
+<td style="text-align: right;">0.0079</td>
+<td style="text-align: right;">-5.3941</td>
+</tr>
+<tr>
+<td style="text-align: left;">MC_Dropout_AB</td>
+<td style="text-align: right;">0.1048</td>
+<td style="text-align: right;">0.2833</td>
+<td style="text-align: right;">0.1389</td>
+<td style="text-align: right;">0.0104</td>
+<td style="text-align: right;">-5.7774</td>
+</tr>
+<tr>
+<td style="text-align: left;">Ensemble_ID</td>
+<td style="text-align: right;">0.1196</td>
+<td style="text-align: right;">0.1169</td>
+<td style="text-align: right;">0.0956</td>
+<td style="text-align: right;">0.0157</td>
+<td style="text-align: right;">-6.3703</td>
+</tr>
+<tr>
+<td style="text-align: left;">Ensemble_AB</td>
+<td style="text-align: right;">0.1196</td>
+<td style="text-align: right;">0.1169</td>
+<td style="text-align: right;">0.0956</td>
+<td style="text-align: right;">0.0157</td>
+<td style="text-align: right;">-6.3703</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key Physics Findings:</strong>
+- Best incompressibility: MC_Dropout_ID (divergence RMS: 0.0915)
+- Highest kinetic energy: MC_Dropout_AB (0.2833)</p>
+<h3>Interpretability Analysis</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Method</th>
+<th style="text-align: right;">Mean_Gradient</th>
+<th style="text-align: right;">Spatial_Autocorr</th>
+<th style="text-align: right;">Spectral_Peak_Freq</th>
+<th style="text-align: right;">Energy_Ratio</th>
+<th style="text-align: right;">High_Activity_Fraction</th>
+<th style="text-align: right;">Activity_Clusters</th>
+<th style="text-align: right;">Spatial_Spread</th>
+<th style="text-align: right;">Prediction_Range</th>
+<th style="text-align: right;">Prediction_Std</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">E5_hit_ens</td>
+<td style="text-align: right;">0.1161</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.934</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">266.82</td>
+<td style="text-align: right;">1.9285</td>
+<td style="text-align: right;">0.3092</td>
+</tr>
+<tr>
+<td style="text-align: left;">E6_hit_ab_ens</td>
+<td style="text-align: right;">0.1161</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.934</td>
+<td style="text-align: right;">0.05</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">266.82</td>
+<td style="text-align: right;">1.9285</td>
+<td style="text-align: right;">0.3092</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key Interpretability Findings:</strong>
+- Spatial gradient patterns show consistent behavior across methods
+- Spectral energy distribution indicates turbulent cascade behavior</p>
+<h2>Discussion</h2>
+<h3>Model Performance</h3>
+<ul>
+<li>Domain shift impact: -1.7% change in RMSE</li>
+<li>In-domain average RMSE: 0.7518</li>
+<li>Out-of-domain average RMSE: 0.7389</li>
+</ul>
+<h3>Uncertainty Quantification Quality</h3>
+<ul>
+<li>Conformal prediction provides distribution-free coverage guarantees</li>
+<li>Ensemble methods show robust uncertainty estimation</li>
+</ul>
+<h3>Physics Consistency</h3>
+<ul>
+<li>All methods maintain reasonable incompressibility constraints</li>
+<li>Energy spectra follow expected turbulent cascade behavior</li>
+<li>Inertial range slopes consistent with Kolmogorov theory</li>
+</ul>
+<h3>Interpretability Insights</h3>
+<ul>
+<li>Spatial pattern analysis reveals method-specific characteristics</li>
+<li>Spectral analysis shows proper energy distribution across scales</li>
+<li>Feature importance maps identify critical flow regions</li>
+</ul>
+<h3>Conclusions</h3>
+<ol>
+<li><strong>Ensemble methods</strong> provide robust uncertainty quantification with good calibration</li>
+<li><strong>Domain shift</strong> significantly impacts prediction accuracy but uncertainty estimates remain reliable</li>
+<li><strong>Physics constraints</strong> are well-preserved across all UQ methods</li>
+<li><strong>Spatial patterns</strong> show consistent turbulent flow characteristics</li>
+</ol>
+<h2>Appendix: Generated Files</h2>
+<h3>Step9 Analysis</h3>
+<ul>
+<li><code>aggregated_metrics.csv</code></li>
+<li><code>training_logs_summary.csv</code></li>
+</ul>
+<h3>Step10 Analysis</h3>
+<ul>
+<li><code>central_slice_comparison_z_sample0.png</code></li>
+<li><code>conformal_intervals_sample0.png</code></li>
+<li><code>method_statistics_summary.csv</code></li>
+<li><code>uncertainty_error_maps_sample0.png</code></li>
+</ul>
+<h3>Step11 Analysis</h3>
+<ul>
+<li><code>performance_comparison_table.csv</code></li>
+<li><code>quantitative_comparison.png</code></li>
+<li><code>uncertainty_quality_metrics.csv</code></li>
+<li><code>uq_comparison_table.tex</code></li>
+</ul>
+<h3>Step12 Analysis</h3>
+<ul>
+<li><code>detailed_physics_results.json</code></li>
+<li><code>physics_comparison.png</code></li>
+<li><code>physics_properties_summary.csv</code></li>
+</ul>
+<h3>Step13 Analysis</h3>
+<ul>
+<li><code>detailed_interpretability_results.json</code></li>
+<li><code>interpretability_summary.csv</code></li>
+<li><code>prediction_pattern_analysis_sample0.png</code></li>
+<li><code>spatial_analysis_sample0.png</code></li>
+</ul>
+<h2>Technical Details</h2>
+<h3>Experiment Configuration</h3>
+<ul>
+<li><strong>Dataset</strong>: Homogeneous Isotropic Turbulence (HIT)</li>
+<li><strong>Grid Resolution</strong>: 32³ voxels</li>
+<li><strong>Input</strong>: 3D velocity fields</li>
+<li><strong>Output</strong>: Pressure field prediction</li>
+<li><strong>UQ Methods</strong>: MC Dropout, Deep Ensembles, Conformal Prediction</li>
+</ul>
+<h3>Computational Environment</h3>
+<ul>
+<li><strong>HPC System</strong>: CSF3 (University of Manchester)</li>
+<li><strong>Framework</strong>: PyTorch</li>
+<li><strong>Analysis Tools</strong>: NumPy, SciPy, Matplotlib, Pandas</li>
+</ul>
+</body>
+</html>

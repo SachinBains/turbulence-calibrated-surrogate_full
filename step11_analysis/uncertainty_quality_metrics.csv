@@ -1,0 +1,7 @@
+experiment,method,domain,coverage_80_error,coverage_90_error,avg_coverage_error,conformal_coverage,avg_uncertainty
+E1_hit_baseline,Baseline,ID (In-Domain),,,,,
+E2_hit_bayes,MC Dropout,ID (In-Domain),0.6151397705078125,0.652166748046875,0.6336532592773438,0.1107177734375,0.2058911770582199
+E3_hit_ab_baseline,Baseline,A->B (Domain Shift),,,,,
+E4_hit_ab_dropout,MC Dropout,A->B (Domain Shift),0.32954101562500004,0.331854248046875,0.33069763183593753,,0.3195284008979797
+E5_hit_ens,Ensemble,ID (In-Domain),,,,0.084197998046875,
+E6_hit_ab_ens,Ensemble,A->B (Domain Shift),,,,,

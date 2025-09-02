@@ -1,0 +1,7 @@
+Method,RMSE,Coverage,Divergence,Inertial_Slope,Spatial_Gradient
+Baseline (ID (In-Domain)),0.7199,N/A,N/A,N/A,N/A
+MC Dropout (ID (In-Domain)),0.7249,0.248,0.0915,-5.39,N/A
+Baseline (A->B (Domain Shift)),0.7133,N/A,N/A,N/A,N/A
+MC Dropout (A->B (Domain Shift)),0.6929,0.568,0.1048,-5.78,N/A
+Ensemble (ID (In-Domain)),0.8106,0.084,0.1196,-6.37,N/A
+Ensemble (A->B (Domain Shift)),0.8106,N/A,0.1196,-6.37,N/A

@@ -1,0 +1,67 @@
+{
+  "timestamp": "2025-09-01T20:57:44.287924",
+  "pipeline_steps": {
+    "step9": {
+      "script_exists": true,
+      "output_dir_exists": true,
+      "outputs_exist": [
+        "aggregated_metrics.csv",
+        "training_logs_summary.csv"
+      ],
+      "missing_outputs": []
+    },
+    "step10": {
+      "script_exists": true,
+      "output_dir_exists": true,
+      "outputs_exist": [
+        "method_statistics_summary.csv"
+      ],
+      "missing_outputs": []
+    },
+    "step11": {
+      "script_exists": true,
+      "output_dir_exists": true,
+      "outputs_exist": [
+        "performance_comparison_table.csv",
+        "uncertainty_quality_metrics.csv"
+      ],
+      "missing_outputs": []
+    },
+    "step12": {
+      "script_exists": true,
+      "output_dir_exists": true,
+      "outputs_exist": [
+        "physics_properties_summary.csv",
+        "detailed_physics_results.json"
+      ],
+      "missing_outputs": []
+    },
+    "step13": {
+      "script_exists": true,
+      "output_dir_exists": true,
+      "outputs_exist": [
+        "interpretability_summary.csv",
+        "detailed_interpretability_results.json"
+      ],
+      "missing_outputs": []
+    },
+    "step14": {
+      "script_exists": true,
+      "output_dir_exists": true,
+      "outputs_exist": [
+        "turbulence_analysis_report.md",
+        "summary_table.tex"
+      ],
+      "missing_outputs": []
+    }
+  },
+  "missing_files": [],
+  "script_validation": {
+    "step9": "valid",
+    "step10": "valid",
+    "step11": "valid",
+    "step12": "valid",
+    "step13": "valid",
+    "step14": "valid"
+  }
+}

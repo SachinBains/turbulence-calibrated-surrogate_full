@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Step 13: Interpretability and Feature Analysis
-Analyzes prediction patterns and spatial characteristics to understand
-what features different UQ methods focus on for turbulence prediction.
+Step 13: Enhanced Interpretability and Uncertainty Explainability Analysis
+Comprehensive analysis using SHAP, ALE, GradCAM, Sobol indices, and advanced
+uncertainty explainability methods for turbulence prediction models.
 """
 
 import os
@@ -15,9 +15,268 @@ import seaborn as sns
 from pathlib import Path
 from scipy import signal, ndimage
 from typing import Dict, List, Tuple, Any
+import torch
+from torch.utils.data import DataLoader
+
+# Add src to path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
+from src.utils.config import load_config
+from src.utils.devices import pick_device
+from src.dataio.hit_dataset import HITDataset
+from src.models.unet3d import UNet3D
+from src.interp.shap_analysis import TurbulenceSHAP
+from src.interp.ale import TurbulenceALE
+from src.interp.gradcam import VelocityFieldGradCAM
+from src.interp.sobol import TurbulenceSobolAnalyzer
+from src.interp.grad import integrated_gradients, gradient_shap
+
+def load_model_and_data(config_path: str, device: torch.device) -> Tuple[torch.nn.Module, DataLoader]:
+    """Load trained model and dataset."""
+    cfg = load_config(config_path)
+    exp_id = cfg['experiment_id']
+    results_dir = Path(cfg['paths']['results_dir']) / exp_id
+    
+    # Find best checkpoint
+    ckpts = sorted(results_dir.glob('best_*.pth'))
+    if not ckpts:
+        raise FileNotFoundError(f"No checkpoint found in {results_dir}")
+    
+    # Build model
+    mcfg = cfg['model']
+    model = UNet3D(
+        mcfg['in_channels'], 
+        mcfg['out_channels'], 
+        base_ch=mcfg['base_channels']
+    )
+    
+    # Load weights
+    state = torch.load(ckpts[-1], map_location=device)
+    model.load_state_dict(state['model'])
+    model = model.to(device)
+    model.eval()
+    
+    # Load dataset
+    dataset = HITDataset(cfg, 'test', eval_mode=True)
+    loader = DataLoader(dataset, batch_size=1, shuffle=False)
+    
+    return model, loader
+
+def comprehensive_shap_analysis(model: torch.nn.Module, loader: DataLoader, 
+                               device: torch.device, output_dir: Path) -> Dict:
+    """Perform comprehensive SHAP analysis for predictions and uncertainty."""
+    print("Running comprehensive SHAP analysis...")
+    
+    shap_analyzer = TurbulenceSHAP(model, device)
+    
+    # Collect data
+    test_samples = []
+    background_samples = []
+    
+    for i, (x, _) in enumerate(loader):
+        if i < 20:  # Background samples
+            background_samples.append(x[0])
+        if 20 <= i < 30:  # Test samples
+            test_samples.append(x[0])
+        if i >= 30:
+            break
+    
+    background_data = torch.stack(background_samples)
+    test_data = torch.stack(test_samples)
+    
+    # Analyze prediction drivers
+    pred_results = shap_analyzer.analyze_prediction_drivers(
+        background_data, test_data, max_evals=500
+    )
+    
+    # Analyze uncertainty drivers
+    uncertainty_results = shap_analyzer.analyze_uncertainty_drivers(
+        background_data, test_data[:3], max_evals=200
+    )
+    
+    # Create visualizations
+    figures_dir = output_dir / 'shap_analysis'
+    figures_dir.mkdir(exist_ok=True)
+    
+    shap_analyzer.create_spatial_shap_maps(pred_results, str(figures_dir))
+    shap_analyzer.create_summary_plots(pred_results, str(figures_dir))
+    
+    # Compute importance statistics
+    pred_importance = shap_analyzer.compute_feature_importance(pred_results['shap_values'])
+    uncertainty_importance = shap_analyzer.compute_feature_importance(uncertainty_results['uncertainty_shap'])
+    
+    return {
+        'prediction_importance': pred_importance,
+        'uncertainty_importance': uncertainty_importance,
+        'shap_results': pred_results,
+        'uncertainty_shap_results': uncertainty_results
+    }
+
+def comprehensive_ale_analysis(model: torch.nn.Module, loader: DataLoader,
+                              device: torch.device, output_dir: Path) -> Dict:
+    """Perform comprehensive ALE analysis."""
+    print("Running comprehensive ALE analysis...")
+    
+    ale_analyzer = TurbulenceALE(model, device)
+    
+    # Collect samples
+    samples = []
+    for i, (x, _) in enumerate(loader):
+        if i >= 50:  # Use 50 samples
+            break
+        samples.append(x[0])
+    
+    X = torch.stack(samples)
+    
+    # Analyze spatial effects
+    spatial_results = ale_analyzer.analyze_spatial_effects(X, n_regions=8, n_bins=15)
+    
+    # Analyze velocity component effects
+    velocity_results = ale_analyzer.analyze_velocity_component_effects(X, n_bins=20)
+    
+    # Create visualizations
+    figures_dir = output_dir / 'ale_analysis'
+    figures_dir.mkdir(exist_ok=True)
+    
+    ale_analyzer.plot_ale_results(spatial_results, str(figures_dir / 'spatial'))
+    ale_analyzer.plot_ale_results(velocity_results, str(figures_dir / 'velocity'))
+    
+    # Compute importance rankings
+    spatial_ranking = ale_analyzer.compute_ale_importance_ranking(spatial_results)
+    velocity_ranking = ale_analyzer.compute_ale_importance_ranking(velocity_results)
+    
+    return {
+        'spatial_effects': spatial_results,
+        'velocity_effects': velocity_results,
+        'spatial_ranking': spatial_ranking,
+        'velocity_ranking': velocity_ranking
+    }
+
+def comprehensive_gradcam_analysis(model: torch.nn.Module, loader: DataLoader,
+                                  device: torch.device, output_dir: Path) -> Dict:
+    """Perform comprehensive GradCAM analysis."""
+    print("Running comprehensive GradCAM analysis...")
+    
+    gradcam_analyzer = VelocityFieldGradCAM(model)
+    
+    # Get sample input
+    sample_input, _ = next(iter(loader))
+    sample_input = sample_input.to(device)
+    
+    # Analyze velocity importance
+    cam_results = gradcam_analyzer.analyze_velocity_importance(sample_input)
+    
+    # Create visualizations
+    figures_dir = output_dir / 'gradcam_analysis'
+    figures_dir.mkdir(exist_ok=True)
+    
+    gradcam_analyzer.visualize_cams(sample_input, cam_results, str(figures_dir))
+    
+    # Get importance statistics
+    importance_stats = gradcam_analyzer.get_importance_statistics(cam_results)
+    
+    # Cleanup
+    gradcam_analyzer.cleanup()
+    
+    return {
+        'cam_results': cam_results,
+        'importance_statistics': importance_stats
+    }
+
+def comprehensive_sobol_analysis(model: torch.nn.Module, loader: DataLoader,
+                                device: torch.device, output_dir: Path) -> Dict:
+    """Perform comprehensive Sobol sensitivity analysis."""
+    print("Running comprehensive Sobol sensitivity analysis...")
+    
+    sobol_analyzer = TurbulenceSobolAnalyzer(model, device)
+    
+    # Get sample input
+    sample_input, _ = next(iter(loader))
+    
+    # Analyze velocity sensitivity
+    velocity_sensitivity = sobol_analyzer.analyze_velocity_sensitivity(
+        sample_input, n_samples=256, perturbation_scale=0.1
+    )
+    
+    # Create visualizations
+    figures_dir = output_dir / 'sobol_analysis'
+    figures_dir.mkdir(exist_ok=True)
+    
+    from src.interp.sobol import plot_sobol_results
+    plot_sobol_results(velocity_sensitivity, "Velocity Field Sensitivity", 
+                      str(figures_dir / 'velocity_sensitivity.png'))
+    
+    return {
+        'velocity_sensitivity': velocity_sensitivity
+    }
+
+def enhanced_uncertainty_analysis(predictions: Dict, output_dir: Path) -> Dict:
+    """Enhanced uncertainty analysis with correlation and calibration metrics."""
+    print("Running enhanced uncertainty analysis...")
+    
+    results = {}
+    
+    for method_name, pred_data in predictions.items():
+        if 'uncertainty' not in pred_data:
+            continue
+            
+        uncertainty = pred_data['uncertainty']
+        errors = pred_data.get('errors', None)
+        
+        if errors is None:
+            continue
+            
+        method_results = {}
+        
+        # Uncertainty-error correlation
+        flat_uncertainty = uncertainty.flatten()
+        flat_errors = errors.flatten()
+        
+        correlation = np.corrcoef(flat_uncertainty, flat_errors)[0, 1]
+        method_results['uncertainty_error_correlation'] = float(correlation)
+        
+        # Calibration analysis
+        n_bins = 10
+        bin_boundaries = np.linspace(0, 1, n_bins + 1)
+        bin_lowers = bin_boundaries[:-1]
+        bin_uppers = bin_boundaries[1:]
+        
+        calibration_error = 0
+        for bin_lower, bin_upper in zip(bin_lowers, bin_uppers):
+            # Find samples in this confidence interval
+            in_bin = (flat_uncertainty >= np.percentile(flat_uncertainty, bin_lower * 100)) & \
+                    (flat_uncertainty < np.percentile(flat_uncertainty, bin_upper * 100))
+            
+            if np.sum(in_bin) > 0:
+                bin_accuracy = np.mean(flat_errors[in_bin] < np.percentile(flat_errors, 80))
+                bin_confidence = (bin_lower + bin_upper) / 2
+                calibration_error += np.abs(bin_accuracy - bin_confidence) * np.sum(in_bin)
+        
+        calibration_error /= len(flat_uncertainty)
+        method_results['calibration_error'] = float(calibration_error)
+        
+        # Sharpness (average uncertainty)
+        method_results['mean_uncertainty'] = float(np.mean(flat_uncertainty))
+        method_results['uncertainty_std'] = float(np.std(flat_uncertainty))
+        
+        # Coverage analysis
+        sorted_indices = np.argsort(flat_uncertainty)
+        sorted_errors = flat_errors[sorted_indices]
+        
+        # Compute coverage at different uncertainty levels
+        coverage_levels = [0.5, 0.8, 0.9, 0.95]
+        for level in coverage_levels:
+            threshold_idx = int(level * len(sorted_errors))
+            if threshold_idx < len(sorted_errors):
+                coverage = np.mean(sorted_errors[:threshold_idx] < np.percentile(flat_errors, level * 100))
+                method_results[f'coverage_{int(level*100)}'] = float(coverage)
+        
+        results[method_name] = method_results
+    
+    return results
 
 def analyze_prediction_patterns(prediction: np.ndarray, method_name: str) -> Dict[str, Any]:
-    """Analyze spatial patterns and characteristics in predictions"""
+    """Enhanced spatial pattern analysis with turbulence-specific metrics."""
     
     # Remove batch dimension if present
     if prediction.ndim == 4 and prediction.shape[0] == 1:
@@ -32,6 +291,8 @@ def analyze_prediction_patterns(prediction: np.ndarray, method_name: str) -> Dic
     results['std_value'] = float(np.std(pred))
     results['min_value'] = float(np.min(pred))
     results['max_value'] = float(np.max(pred))
+    results['skewness'] = float(signal.skew(pred.flatten()))
+    results['kurtosis'] = float(signal.kurtosis(pred.flatten()))
     
     # Spatial gradients (measure of local variation)
     grad_x = np.gradient(pred, axis=0)
@@ -42,6 +303,17 @@ def analyze_prediction_patterns(prediction: np.ndarray, method_name: str) -> Dic
     results['gradient_mean'] = float(np.mean(gradient_magnitude))
     results['gradient_std'] = float(np.std(gradient_magnitude))
     results['gradient_max'] = float(np.max(gradient_magnitude))
+    
+    # Turbulence-specific metrics
+    # Approximate enstrophy (vorticity magnitude squared)
+    if pred.ndim == 3:
+        # Simple finite difference approximation
+        dw_dy = np.gradient(pred, axis=1)
+        dv_dz = np.gradient(pred, axis=2)
+        omega_x = dw_dy - dv_dz  # Simplified vorticity component
+        enstrophy = omega_x**2
+        results['enstrophy_mean'] = float(np.mean(enstrophy))
+        results['enstrophy_std'] = float(np.std(enstrophy))
     
     # Spatial autocorrelation (measure of spatial structure)
     center_slice = pred[pred.shape[0]//2]
